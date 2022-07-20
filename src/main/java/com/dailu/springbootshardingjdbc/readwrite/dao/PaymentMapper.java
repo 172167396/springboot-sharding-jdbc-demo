@@ -18,4 +18,8 @@ public interface PaymentMapper {
 
     @Select("<script>select id,message,status,create_time from tb_pay where id in <foreach collection=\"ids\" item=\"id\" separator=\",\" open=\"(\" close=\")\">#{id}</foreach></script>")
     List<Payment> getPayment(@Param("ids") Collection<String> ids);
+
+    @Select("select count(1) from tb_pay")
+    int count();
+
 }

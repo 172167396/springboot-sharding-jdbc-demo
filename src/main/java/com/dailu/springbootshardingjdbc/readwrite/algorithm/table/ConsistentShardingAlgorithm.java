@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.SortedMap;
 
+/**
+ * 感觉database和table的可以分开，用一个类没法区分是对哪个分片
+ */
+@SuppressWarnings("unused")
 public class ConsistentShardingAlgorithm
         implements PreciseShardingAlgorithm<Long>, RangeShardingAlgorithm<Long> {
 
@@ -21,26 +25,19 @@ public class ConsistentShardingAlgorithm
     @Override
     public String doSharding(Collection<String> availableTargetNames, PreciseShardingValue<Long> shardingValue) {
 
-		//获取已经初始化的分表节点
         InitTableNodesToHashLoop initTableNodesToHashLoop =
                 SpringContextUtils.getBean(InitTableNodesToHashLoop.class);
         if (CollectionUtils.isEmpty(availableTargetNames)) {
             return shardingValue.getLogicTableName();
         }
-
-        //这里主要为了兼容当联表查询时，如果两个表非关联表则
-        //当对副表分表时shardingValue这里传递进来的依然是主表的名称，
-        //但availableTargetNames中确是副表名称，所有这里要从availableTargetNames中匹配真实表
         ArrayList<String> availableTargetNameList = new ArrayList<>(availableTargetNames);
         String logicTableName = availableTargetNameList.get(0).replaceAll("[^(a-zA-Z_)]", "");
         //获取初始化的节点
         SortedMap<Long, String> tableHashNode =
                 initTableNodesToHashLoop.getTableVirtualNodes().get(logicTableName);
-
         //初始化节点为空时，构造对象时重新初始化一次
         ConsistentHashAlgorithm consistentHashAlgorithm = new ConsistentHashAlgorithm(tableHashNode,
                 availableTargetNames);
-
         return consistentHashAlgorithm.getTableNode(String.valueOf(shardingValue.getValue()));
     }
 

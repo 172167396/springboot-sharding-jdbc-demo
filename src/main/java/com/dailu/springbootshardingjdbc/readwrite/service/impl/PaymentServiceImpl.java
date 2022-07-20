@@ -32,4 +32,9 @@ public class PaymentServiceImpl implements PaymentService {
 //        HintManager.getInstance().setMasterRouteOnly();
         return paymentMapper.getPayment(idList);
     }
+
+    @Override
+    public int count() {
+        return paymentMapper.count();
+    }
 }

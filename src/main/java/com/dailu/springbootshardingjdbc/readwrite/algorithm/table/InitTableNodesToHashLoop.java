@@ -1,8 +1,6 @@
 package com.dailu.springbootshardingjdbc.readwrite.algorithm.table;
 
-import io.shardingsphere.core.rule.DataNode;
-import io.shardingsphere.core.rule.ShardingRule;
-import io.shardingsphere.core.rule.TableRule;
+import io.shardingsphere.core.rule.*;
 import io.shardingsphere.shardingjdbc.jdbc.core.datasource.ShardingDataSource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -26,15 +24,19 @@ public class InitTableNodesToHashLoop {
     @Getter
     private final HashMap<String, SortedMap<Long, String>> tableVirtualNodes = new HashMap<>();
 
+    @Getter
+    private final HashMap<String, SortedMap<Long, String>> datasourceVirtualNodes = new HashMap<>();
+
     @PostConstruct
     public void init() {
         try {
             ShardingRule rule = ((ShardingDataSource) dataSource).getShardingContext().getShardingRule();
             Collection<TableRule> tableRules = rule.getTableRules();
+            //datasourceVirtualNodes的key为ds_,value为datasource的hash环,待实现
+            Collection<MasterSlaveRule> masterSlaveRules = rule.getMasterSlaveRules();
             ConsistentHashAlgorithm consistentHashAlgorithm = new ConsistentHashAlgorithm();
             for (TableRule tableRule : tableRules) {
                 String logicTable = tableRule.getLogicTable();
-
                 tableVirtualNodes.put(logicTable,
                         consistentHashAlgorithm.initNodesToHashLoop(
                                 tableRule.getActualDataNodes()

@@ -24,4 +24,9 @@ public class CommonController {
     public List<Payment> getPayment(String[] ids) {
         return paymentService.getPayment(ids);
     }
+
+    @GetMapping("/count")
+    public int count(){
+        return paymentService.count();
+    }
 }

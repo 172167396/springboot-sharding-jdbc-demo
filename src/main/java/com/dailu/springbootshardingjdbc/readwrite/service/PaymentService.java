@@ -9,4 +9,7 @@ public interface PaymentService {
     void savePayment(Payment payment);
 
     List<Payment> getPayment(String[] ids);
+
+    int count();
+
 }

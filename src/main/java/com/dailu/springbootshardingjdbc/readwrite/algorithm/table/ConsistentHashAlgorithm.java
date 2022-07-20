@@ -95,7 +95,4 @@ public class ConsistentHashAlgorithm {
         return Math.abs(hash);
     }
 
-    public static void main(String[] args) {
-        System.out.println(getHash("key2022-04-07"));
-    }
 }
